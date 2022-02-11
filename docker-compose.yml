@@ -14,8 +14,6 @@ services:
   nginx:
     build: ./nginx
     volumes:
-      - static_volume:/app/static
-      - media_volume:/app/media
       - /etc/ssl:/etc/ssl
     ports:
       - "80:80"
