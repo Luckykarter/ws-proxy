@@ -1,0 +1,16 @@
+*.pyc
+.eggs
+bin
+dist
+build
+share
+lib
+include
+ENV
+venv
+.idea
+*_local
+*.egg-info
+.tox
+.coverage
+htmlcov
