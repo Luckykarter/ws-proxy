@@ -23,3 +23,6 @@ services:
     depends_on:
       - ws-proxy
     restart: always
+
+networks:
+  backend:
