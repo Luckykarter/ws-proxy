@@ -22,6 +22,7 @@ class ConnectionManager:
         for connection in self.active_connections[application][client_id]:
             try:
                 await connection.send_json(message)
+                print(f"sent {message}")
             except Exception as e:  # pragma: no cover
                 pass
 
@@ -41,6 +42,7 @@ async def websocket_endpoint(websocket: WebSocket, application: str, client_id: 
         try:
             data = await websocket.receive_json()
             if 'message' in data:
+                print(f"received: {data}")
                 await manager.broadcast(data.get('message'), application, client_id)
         except WebSocketDisconnect:
             manager.disconnect(websocket, application, client_id)
