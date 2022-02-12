@@ -8,6 +8,9 @@ services:
 #    ports:
 #      - "8000:8000"
     restart: always
+    depends_on:
+      - redis
+      - nginx
     networks:
       - backend
 
@@ -30,8 +33,6 @@ services:
       - "9443:9443"
     networks:
       - backend
-    depends_on:
-      - ws-proxy
     restart: always
 
   redis:
