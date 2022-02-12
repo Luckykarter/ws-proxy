@@ -15,6 +15,8 @@ COPY ./app /app/app
 
 WORKDIR /app
 
+ENV PYTHONPATH=/app
+
 EXPOSE 8000
 
 FROM ws_proxy as ws_test
