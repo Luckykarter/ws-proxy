@@ -1,15 +1,25 @@
-version: "2.0"
+version: "3.7"
 
 services:
   ws-proxy:
     build:
       context: .
-    command:  gunicorn app.main:app --workers=1 -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000
+    command:  gunicorn app.main:app --workers=3 -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000
 #    ports:
 #      - "8000:8000"
     restart: always
     networks:
       - backend
+
+  ws-proxy-test:
+    build:
+      context: .
+      target: ws_test
+    depends_on:
+      - redis
+    networks:
+      - backend
+    command: pytest --cov=app --cov-fail-under 100
 
   nginx:
     build: ./nginx
@@ -23,6 +33,16 @@ services:
     depends_on:
       - ws-proxy
     restart: always
+
+  redis:
+    image: redis
+    networks:
+      - backend
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+    command: redis-server --appendonly yes
+    restart: always
+
 
 networks:
   backend:

@@ -1,7 +1,13 @@
+import json
+import asyncio
+import os
+
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from collections import defaultdict
+import redis
 
 app = FastAPI()
+rds = redis.StrictRedis(os.getenv('REDIS_HOST', 'localhost'))
 
 
 class ConnectionManager:
@@ -26,8 +32,24 @@ class ConnectionManager:
             except Exception as e:  # pragma: no cover
                 pass
 
+    async def consume(self):
+        print("started to consume")
+        sub = rds.pubsub()
+        sub.subscribe('channel')
+        while True:
+            await asyncio.sleep(0.01)
+            message = sub.get_message(ignore_subscribe_messages=True)
+            if message is not None and isinstance(message, dict):
+                msg = json.loads(message.get('data'))
+                await self.broadcast(msg['message'], msg['application'], msg['client_id'])
+
 
 manager = ConnectionManager()
+
+
+@app.on_event("startup")
+async def subscribe():
+    asyncio.create_task(manager.consume())
 
 
 @app.get('/')
@@ -43,7 +65,14 @@ async def websocket_endpoint(websocket: WebSocket, application: str, client_id: 
             data = await websocket.receive_json()
             if 'message' in data:
                 print(f"received: {data}")
-                await manager.broadcast(data.get('message'), application, client_id)
+                rds.publish(
+                    'channel',
+                    json.dumps({
+                        'application': application,
+                        'client_id': client_id,
+                        'message': data.get('message')
+                    })
+                )
         except WebSocketDisconnect:
             manager.disconnect(websocket, application, client_id)
         except RuntimeError:

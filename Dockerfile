@@ -9,9 +9,20 @@ RUN pip install --upgrade pip
 COPY requirements.txt /tmp/
 RUN pip install -r /tmp/requirements.txt
 
+ENV REDIS_HOST='redis'
 
 COPY ./app /app/app
 
 WORKDIR /app
 
 EXPOSE 8000
+
+FROM ws_proxy as ws_test
+
+COPY requirements_test.txt /tmp/requirements_test.txt
+RUN pip install -r /tmp/requirements_test.txt
+
+COPY ./tests /app/tests
+COPY pytest.ini /app/
+
+WORKDIR /app/tests
