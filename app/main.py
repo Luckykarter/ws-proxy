@@ -25,12 +25,13 @@ class ConnectionManager:
         self.active_connections[application][client_id].remove(websocket)
 
     async def broadcast(self, message: dict, application: str, client_id: str):
-        for connection in self.active_connections[application][client_id]:
-            try:
-                await connection.send_json(message)
-                print(f"sent {message}")
-            except Exception as e:  # pragma: no cover
-                pass
+        if application in self.active_connections and client_id in self.active_connections[application]:
+            for connection in self.active_connections[application][client_id]:
+                try:
+                    await connection.send_json(message)
+                    print(f"sent {message}")
+                except Exception as e:  # pragma: no cover
+                    pass
 
     async def consume(self):
         print("started to consume")
