@@ -4,7 +4,7 @@ services:
   ws-proxy:
     build:
       context: .
-    command:  gunicorn app.main:app --workers=3 -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000
+    command:  gunicorn app.main:app --workers=1 -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000
 #    ports:
 #      - "8000:8000"
     restart: always
