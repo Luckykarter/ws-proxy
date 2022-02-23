@@ -22,7 +22,7 @@ services:
       - redis
     networks:
       - backend
-    command: pytest --cov=app --cov-fail-under 100
+    command: pytest --cov=app --cov-fail-under 100 -v -s
 
   nginx:
     build: ./nginx
