@@ -1,6 +1,7 @@
 import pytest
 from fastapi.testclient import TestClient
 from app.main import app
+from uuid import uuid4
 
 
 
@@ -18,11 +19,28 @@ def message():
 
 def test_send_message(message):
     with TestClient(app) as client:
-        with client.websocket_connect('/ws/channel/test/1/') as websocket:
+        with client.websocket_connect(f'/ws/channel/test/{uuid4()}/') as websocket:
             websocket.send_json(message)
             data = websocket.receive_json()
-            assert data == message['message']
+            assert data['content'] == message['message']['content']
+            assert data['title'] == message['message']['title']
             assert data["success"]
+
+
+def test_get_history(message):
+    client_id = str(uuid4())
+    channel = 'test'
+    with TestClient(app) as client:
+        with client.websocket_connect(f'/ws/channel/{channel}/{client_id}/') as websocket:
+            websocket.send_json(message)
+            websocket.receive_json()
+        history = client.get(f'/ws/history/{channel}/{client_id}/')
+        history = history.json()
+        lines = [x.get('content') for x in history]
+        titles = [x.get('title') for x in history]
+
+        assert message['message']['content'] in lines
+        assert message['message']['title'] in titles
 
 
 def test_main():

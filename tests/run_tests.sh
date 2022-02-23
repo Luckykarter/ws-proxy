@@ -5,8 +5,8 @@ close() {
 }
 
 echo "=========================== Build ==========================="
-docker-compose build ws-proxy-test || close 1
+docker-compose build test || close 1
 
 echo "=========================== Test ==========================="
-docker-compose run --rm ws-proxy-test || close 1
+docker-compose run --rm test || close 1
 close 0

@@ -14,7 +14,7 @@ services:
     networks:
       - backend
 
-  ws-proxy-test:
+  test:
     build:
       context: .
       target: ws_test
@@ -22,7 +22,7 @@ services:
       - redis
     networks:
       - backend
-    command: pytest --cov=app --cov-fail-under 100 -v -s
+    command: pytest --cov=app --cov-fail-under 100 --cov-report term-missing -v -s
 
   nginx:
     build: ./nginx
