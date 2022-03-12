@@ -98,9 +98,20 @@ def get_history(application: str, client_id: str):
 
 @app.post('/post/')
 async def echo_post(request: Request):
-    r = await request.json()
-    print(r)
-    return r
+    print(request.method)
+    try:
+        r = await request.json()
+        print(r)
+        return r
+    except Exception as e:
+        print(e)
+        print("----body----:")
+        body = b''
+        async for chunk in request.stream():
+            body += chunk
+        print(body)
+        body = body.decode(encoding='utf-8')
+        return body
 
 
 def _error_message(error):
