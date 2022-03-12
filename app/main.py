@@ -3,7 +3,7 @@ import pickle
 import asyncio
 import os
 
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Request
 from collections import defaultdict
 import redis
 import logging
@@ -93,6 +93,13 @@ def read_root():
 @app.get('/ws/history/{application}/{client_id}/')
 def get_history(application: str, client_id: str):
     return History(application, client_id).content
+
+
+@app.post('/post/')
+async def echo_post(request: Request):
+    r = await request.json()
+    print(r)
+    return r
 
 
 def _error_message(error):
