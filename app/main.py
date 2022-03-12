@@ -1,4 +1,4 @@
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Request
 from collections import defaultdict
 
 app = FastAPI()
@@ -34,6 +34,11 @@ manager = ConnectionManager()
 def read_root():
     return {"websocket_proxy": "hi!"}
 
+@app.post('/post/')
+async def echo_post(request: Request):
+    r = await request.json()
+    print(r)
+    return r
 
 @app.websocket("/ws/channel/{application}/{client_id}/")
 async def websocket_endpoint(websocket: WebSocket, application: str, client_id: str):
