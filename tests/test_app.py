@@ -1,8 +1,7 @@
 import pytest
 from fastapi.testclient import TestClient
-from app.main import app
+from app.main import app, _error_message
 from uuid import uuid4
-
 
 
 @pytest.fixture
@@ -17,6 +16,14 @@ def message():
     }
 
 
+@pytest.fixture
+def error_message():
+    return {
+        "type": "test_message",
+        'message': "not a json"
+    }
+
+
 def test_send_message(message):
     with TestClient(app) as client:
         with client.websocket_connect(f'/ws/channel/test/{uuid4()}/') as websocket:
@@ -25,6 +32,14 @@ def test_send_message(message):
             assert data['content'] == message['message']['content']
             assert data['title'] == message['message']['title']
             assert data["success"]
+
+
+def test_error_message(error_message):
+    with TestClient(app) as client:
+        with client.websocket_connect(f'/ws/channel/test/{uuid4()}/') as websocket:
+            websocket.send_json(error_message)
+            data = websocket.receive_json()
+            assert data['content'] == f'message must be JSON. Received: "{error_message["message"]}"'
 
 
 def test_get_history(message):

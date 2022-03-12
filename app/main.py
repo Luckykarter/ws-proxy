@@ -61,7 +61,7 @@ class ConnectionManager:
             for connection in self.active_connections[application][client_id]:
                 try:
                     await connection.send_json(message)
-                    print(f"sent {message}")
+                    print(f"sent: {message}")
                 except Exception as e:  # pragma: no cover
                     pass
 
@@ -95,6 +95,14 @@ def get_history(application: str, client_id: str):
     return History(application, client_id).content
 
 
+def _error_message(error):
+    return {
+        'title': 'ERROR',
+        'content': error,
+        'success': False
+    }
+
+
 @app.websocket("/ws/channel/{application}/{client_id}/")
 async def websocket_endpoint(websocket: WebSocket, application: str, client_id: str):
     await manager.connect(websocket, application, client_id)
@@ -102,15 +110,18 @@ async def websocket_endpoint(websocket: WebSocket, application: str, client_id: 
         try:
             data = await websocket.receive_json()
             if 'message' in data:
-                history = History(application, client_id)
-                history.add_line(data.get('message'))
                 print(f"received: {data}")
+                msg = data.get('message')
+                if not isinstance(msg, dict):
+                    msg = _error_message(f'message must be JSON. Received: "{msg}"')
+                history = History(application, client_id)
+                history.add_line(msg)
                 rds.publish(
                     'channel',
                     json.dumps({
                         'application': application,
                         'client_id': client_id,
-                        'message': data.get('message')
+                        'message': msg
                     })
                 )
         except WebSocketDisconnect:
