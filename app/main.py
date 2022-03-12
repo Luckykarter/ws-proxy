@@ -4,6 +4,7 @@ import asyncio
 import os
 
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Request
+from starlette.responses import RedirectResponse
 from collections import defaultdict
 import redis
 import logging
@@ -87,7 +88,7 @@ async def subscribe():
 
 @app.get('/')
 def read_root():
-    return {"websocket_proxy": "hi!"}
+    return RedirectResponse(url='https://voitixler.ru/')
 
 
 @app.get('/ws/history/{application}/{client_id}/')
