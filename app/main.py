@@ -3,7 +3,7 @@ import pickle
 import asyncio
 import os
 
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Request
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Request, Form
 from starlette.responses import RedirectResponse
 from collections import defaultdict
 import redis
@@ -99,6 +99,7 @@ def get_history(application: str, client_id: str):
 @app.post('/post/')
 async def echo_post(request: Request):
     print(request.method)
+    print(request.headers.raw)
     try:
         r = await request.json()
         print(r)
