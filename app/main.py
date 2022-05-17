@@ -88,7 +88,7 @@ async def subscribe():
 
 @app.get('/')
 def read_root():
-    return RedirectResponse(url='https://voitixler.ru/')
+    return RedirectResponse(url='https://voitixler.com/')
 
 
 @app.get('/ws/history/{application}/{client_id}/')
@@ -153,4 +153,4 @@ async def websocket_endpoint(websocket: WebSocket, application: str, client_id: 
 if __name__ == '__main__':  # pragma: no cover
     import uvicorn
 
-    uvicorn.run(app, host='0.0.0.0', port=8080)
+    uvicorn.run(app, host='0.0.0.0', port=int(os.getenv('PORT', '8080')))
