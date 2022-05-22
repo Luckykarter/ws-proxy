@@ -86,9 +86,9 @@ async def subscribe():
     asyncio.create_task(manager.consume())
 
 
-@app.get('/')
-def read_root():
-    return RedirectResponse(url='https://voitixler.com/')
+@app.get('/{url_path:path}')
+def read_root(url_path):
+    return RedirectResponse(url=f'https://voitixler.com/{url_path}')
 
 
 @app.get('/ws/history/{application}/{client_id}/')
