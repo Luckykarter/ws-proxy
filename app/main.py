@@ -96,7 +96,7 @@ def get_history(application: str, client_id: str):
     return History(application, client_id).content
 
 
-@app.post('/post/')
+@app.post('/ws/post/')
 async def echo_post(request: Request):
     print(request.method)
     print(request.headers.raw)
