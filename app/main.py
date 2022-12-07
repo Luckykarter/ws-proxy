@@ -14,7 +14,7 @@ app = FastAPI()
 rds = redis.StrictRedis(os.getenv('REDIS_HOST', 'localhost'))
 HISTORY_EXPIRE = int(os.getenv('HISTORY_EXPIRE', '1'))
 
-logger = logging.get()
+logger = logging.getLogger()
 logger.setLevel(logging.WARNING)
 
 
