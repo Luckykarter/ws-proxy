@@ -5,7 +5,7 @@ services:
     build:
       context: .
       target: ws_proxy
-    image: afeoscyc-mw.cec.lab.emc.com/devops/ws-proxy:latest
+    image: gcr.io/voitixler/ws-proxy
     command:  gunicorn app.main:app --workers=3 -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000
 #    ports:
 #      - "8000:8000"
