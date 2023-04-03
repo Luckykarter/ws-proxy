@@ -15,3 +15,5 @@ COPY ./app /app/app
 WORKDIR /app
 
 EXPOSE 8000
+
+ENTRYPOINT ["python", "app/main.py"]

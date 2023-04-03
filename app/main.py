@@ -52,5 +52,4 @@ async def websocket_endpoint(websocket: WebSocket, application: str, client_id: 
 
 if __name__ == '__main__':  # pragma: no cover
     import uvicorn
-
-    uvicorn.run(app, host='0.0.0.0', port=8005)
+    uvicorn.run(app, host='0.0.0.0', port=8080)
